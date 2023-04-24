@@ -4,6 +4,8 @@ import joblib
 import numpy as np
 from sklearn import datasets
 
+iris = datasets.load_iris()  # Add this line to load the Iris dataset
+
 st.title("Iris Flower Classifier")
 
 st.write("""
