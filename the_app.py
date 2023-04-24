@@ -4,7 +4,11 @@ import joblib
 import numpy as np
 from sklearn import datasets
 
-iris = datasets.load_iris()  # Add this line to load the Iris dataset
+iris = datasets.load_iris()
+
+@st.cache  # Add this decorator
+def predict(features, model):
+    return model.predict(features)
 
 st.title("Iris Flower Classifier")
 
@@ -20,7 +24,7 @@ petal_width = st.slider("Petal Width (cm)", 0.1, 2.5, 1.4)
 features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
 
 iris_rf_model = joblib.load('iris_rf_model.pkl')
-prediction = iris_rf_model.predict(features)
+prediction = predict(features, iris_rf_model)
 
 st.subheader("Prediction:")
 st.write(iris.target_names[prediction])
