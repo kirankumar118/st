@@ -44,4 +44,4 @@ prediction = predict(model, scaler, encoder, features)
 
 # Display the prediction
 st.subheader("Prediction:")
-st.write(prediction)
+st.write(['setosa', 'versicolor', 'virginica'][prediction[0]])
