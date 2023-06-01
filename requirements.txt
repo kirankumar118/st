@@ -6,3 +6,4 @@ numpy
 youtube_transcript_api
 scikit-learn
 joblib
+tensorflow
