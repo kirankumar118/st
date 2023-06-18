@@ -125,7 +125,7 @@ def sentiment_tab():
         response = chatgpt.choices[0]["text"].replace("\n", "") # to remonve all the \n - Courtesy of Alex Z.
         # response = get_sentiment(user_query)
         return st.write(f"{response}")
-def generate_response(prompt):
+def generate_response2(prompt):
     completion=openai.Completion.create(
         engine='text-davinci-003',
         prompt=prompt,
@@ -137,7 +137,7 @@ def generate_response(prompt):
     message=completion.choices[0].text
     return message
 
-def chat_tab():
+def chat_tab2():
     st.title("ChatGPT-like Web App")
     #storing the chat
     if 'generated' not in st.session_state:
@@ -157,6 +157,55 @@ def chat_tab():
         for i in range(len(st.session_state['generated'])-1, -1, -1):
             message(st.session_state["generated"][i], key=str(i))
             message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+def generate_response(prompt, context):
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": context},
+            {"role": "assistant", "content": prompt},
+        ],
+        max_tokens=50,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+    message = response.choices[0].message
+    return message["content"]
+
+def chat_tab():
+    st.title("ChatGPT-like Web App")
+
+    # Storing the chat
+    if "generated" not in st.session_state:
+        st.session_state["generated"] = []
+    if "past" not in st.session_state:
+        st.session_state["past"] = []
+
+    user_input = st.text_input("You:", key="input")
+
+    if user_input:
+        context = " ".join(st.session_state["past"])
+        output = generate_response(user_input, context)
+        
+        # Store the output
+        st.session_state["past"].append(user_input)
+        st.session_state["generated"].append(output)
+
+    if st.session_state["generated"]:
+        for i in range(len(st.session_state["generated"]) - 1, -1, -1):
+            message(st.session_state["generated"][i]["content"], key=str(i))
+            message(
+                st.session_state["past"][i],
+                is_user=True,
+                key=str(i) + "_user",
+            )
+
+def message(content, is_user=False, key=None):
+    if is_user:
+        st.text_input("You:", value=content, key=key)
+    else:
+        st.text_area("Assistant:", value=content, key=key)
     
 
 def image_tab():
